@@ -3,6 +3,8 @@ extends Node2D
 @export var interactable = true
 @export var breakable = true
 
+@onready var collision_body = $StaticBody2D
+
 signal clicked(sender, block_position: Vector2)
 
 var dsum = 0.0

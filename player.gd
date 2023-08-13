@@ -25,9 +25,6 @@ var put_block = func (_pos: Vector2):
 	push_error("put_block` function must be set")
 
 func freeing_progress():
-	# t=7  ... f=1
-	# t=22 ... f=0
-	
 	var result = (internal_temperature.celsius - FREEZING_TEMPERATURE) \
 			   / (COMFORTABLE_TEMPERATURE - FREEZING_TEMPERATURE)
 	result = clampf(result, 0.0, 1.0)
@@ -50,12 +47,10 @@ func temperature_interaction(updated_block: GridBlock, grid_block: GridBlock):
 func gain_block():
 	carying = CARRY_ITEMS.BLOCK
 	cary_block.visible = true
-	print(carying)
 	
 func lose_block():
 	carying = CARRY_ITEMS.NONE
 	cary_block.visible = false
-	print(carying)
 
 func lose_fuel():
 	carying = CARRY_ITEMS.NONE
