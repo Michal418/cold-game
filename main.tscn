@@ -1,0 +1,79 @@
+[gd_scene load_steps=6 format=3 uid="uid://bq6p8nctx4vbd"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_helkc"]
+[ext_resource type="PackedScene" uid="uid://gxwc3f7w4qb" path="res://player.tscn" id="2_s6v7b"]
+[ext_resource type="Script" path="res://temperature.gd" id="4_1qu3o"]
+
+[sub_resource type="SystemFont" id="SystemFont_pnarr"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_u5gqn"]
+line_spacing = 0.0
+font = SubResource("SystemFont_pnarr")
+font_size = 22
+font_color = Color(0.12549, 0.12549, 0.12549, 1)
+shadow_size = 0
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_helkc")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Temperature" type="Label" parent="UI"]
+offset_left = 17.0
+offset_top = 18.0
+offset_right = 215.0
+offset_bottom = 57.0
+text = "Internal temperature: 20.99 *C
+External temperature: -39.99 *C"
+label_settings = SubResource("LabelSettings_u5gqn")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="UI/Temperature"]
+z_index = -1
+layout_mode = 0
+offset_left = -9.0
+offset_top = -9.0
+offset_right = 31.0
+offset_bottom = 31.0
+scale = Vector2(9.47999, 2.32)
+color = Color(1, 1, 1, 0.482353)
+
+[node name="Restart" type="Label" parent="UI"]
+visible = false
+z_index = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -127.0
+offset_top = -19.5
+offset_right = 127.0
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Press Enter to restart"
+label_settings = SubResource("LabelSettings_u5gqn")
+
+[node name="Overlay" type="ColorRect" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0.784314, 1, 0.545098)
+
+[node name="TemperatureControl" type="Node2D" parent="."]
+script = ExtResource("4_1qu3o")
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("2_s6v7b")]
+position = Vector2(1357, 856)
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+color = Color(0.698039, 0.698039, 0.698039, 1)
+
+[connection signal="died" from="Player" to="." method="_on_player_died"]

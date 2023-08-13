@@ -1,0 +1,186 @@
+extends Node2D
+
+const Temperature = preload("res://temperature.gd")
+const Fire = preload("res://fire.gd")
+const World = preload("res://world.gd")
+
+var block = preload("block.tscn")
+var wood = preload("res://wood.tscn")
+var fire = preload("res://fire.tscn")
+
+var world = World.new(50, 64)
+
+@onready var temperature_control: Temperature = $TemperatureControl
+@onready var player = $Player
+@onready var temperature_label = $UI/Temperature
+@onready var cold_overlay = $UI/Overlay
+
+
+
+func put_wood(pos: Vector2):
+	if not test_collision(player.wood_collision_shape.shape, pos):
+		var w = wood.instantiate()
+		w.position = pos
+		self.add_child(w)
+		player.lose_fuel()
+	
+func place_block_to_grid(grid_position: Vector2, unbreakable=false):
+	var world_position = world.grid_to_world(grid_position) + Vector2(32, 32)
+	
+	var b = block.instantiate()
+	b.position = world_position # temperature_control.grid_to_world(temperature_control.world_to_grid(pos))
+	b.connect('clicked', _on_block_clicked)
+	
+	b.breakable = not unbreakable
+	
+	self.add_child(b)
+	
+	var t = temperature_control.get_temperature(grid_position)
+	temperature_control.set_block(grid_position, GridBlock.solid_block(t))
+	
+func put_block(mouse_position: Vector2):
+	var grid_position = world.world_to_grid(mouse_position) # + Vector2(32, 32)
+	var world_position = world.grid_to_world(grid_position) + Vector2(32, 32)
+	
+	if not test_collision(player.block_collision_shape.shape, world_position):
+		place_block_to_grid(grid_position)
+		player.lose_block()
+
+func construct_world(noise: FastNoiseLite, rng: RandomNumberGenerator):
+	var threshold = 0.25
+	var unbreakable_threshold = 0.85
+	
+	# initialize fire
+	
+	var fire_instance = fire.instantiate()
+	var f_grid_position = world.world_to_grid(player.position) + Vector2(3, 2)
+	fire_instance.position = world.grid_to_world(f_grid_position)
+	fire_instance.initialize(temperature_control, player)
+	fire_instance.connect("clicked", _on_fire_clicked)
+	self.add_child(fire_instance)
+	
+	# initialize player 
+	
+	player.connect("died", fire_instance._on_player_died)
+	player.put_wood = self.put_wood
+	player.put_block = self.put_block
+	
+	# initialize temperature control
+	
+	temperature_control.initialize(world)
+	temperature_control.add_object(player)
+	temperature_control.add_object(fire_instance)
+	
+	# place blocks
+	
+	var free_blocks = []
+	
+	for x in range(world.grid_size):
+		for y in range(world.grid_size):
+			var noise_sample = noise.get_noise_2d(x, y)
+			var grid_position = Vector2(x, y)
+			var world_position = world.grid_to_world(grid_position)
+			
+			var positional_value = _area_fn(x, y, unbreakable_threshold + 1.0)
+			var k = positional_value + noise_sample
+			
+			if k > threshold:
+				if k < unbreakable_threshold and (x == 0 or x == world.grid_size - 1 or y == 0 or y == world.grid_size - 1):
+					push_warning("border block is breakable")
+				
+				place_block_to_grid(grid_position, k >= unbreakable_threshold)
+				
+			elif rng.randf() < 0.025:
+				var w = wood.instantiate()
+				w.position = world_position + Vector2(32, 32)
+				self.add_child(w)
+				
+			else:
+				free_blocks.push_back(world_position)
+					
+	var idx = rng.randi_range(0, free_blocks.size())
+	player.position = free_blocks[idx] + Vector2(32, 32)
+	free_blocks.remove_at(idx)
+	
+	free_blocks.sort_custom(func (a, b):
+		return a.distance_to(player.position) < b.distance_to(player.position)
+	)
+	fire_instance.position = free_blocks[0] + Vector2(32, 32)
+	
+	var _floor = $Floor
+	_floor.position = world.grid_to_world(Vector2(0, 0))
+	_floor.size = Vector2(world.block_size, world.block_size)
+	_floor.scale = Vector2(world.grid_size - 1, world.grid_size - 1)
+	
+#	print(_floor.get_transform().get_scale(), size * temperature_control.BLOCK_SIZE)
+
+func _area_fn(x: int, y: int, peak: float) -> float:
+	var distance = _distance_from_border(world.grid_size, Vector2(x, y))
+	var k = 10.0
+
+	return clampf(peak * (1.0 - (distance as float / k as float)), 0.0, peak)
+
+func _distance_from_border(p_size: int, point: Vector2) -> int:
+	var top_distance = abs(point.y - p_size)
+	var bottom_distance = abs(point.y - 0)
+	var left_distance = abs(point.x - 0)
+	var right_distance = abs(point.x - p_size)
+
+	return min(top_distance, bottom_distance, left_distance, right_distance)
+
+func _process(_delta):
+	var fmt = "Internal temperature: %.1f \u00b0C\nExternal temperature: %.1f \u00b0C"
+	var temperature_text = fmt % [player.internal_temperature.celsius, player.external_temperature]
+	temperature_label.text = temperature_text
+	
+	cold_overlay.color.a = 1.0 - player.freeing_progress()
+
+func _ready():
+	var rng = RandomNumberGenerator.new()
+	rng.seed = randi()
+	
+	var noise = FastNoiseLite.new()
+	noise.seed = rng.randi() # 1336368079
+	noise.frequency = 0.075
+	
+	print(noise.seed)
+	
+	construct_world(noise, rng)
+	
+	var ui_events = InputMap.action_get_events("ui_accept").map(func (a): return '"%s"' % a.as_text())
+	var action_names = "(%s)" % " or ".join(ui_events)
+	
+	$UI/Restart.text = "Press %s to restart" % action_names
+	
+func test_collision(p_shape: Shape2D, p_position):
+	var world_state = get_world_2d().direct_space_state
+	var params = PhysicsShapeQueryParameters2D.new()
+	params.collide_with_areas = true
+	params.shape = p_shape # p_shape.get_rid()
+	params.transform = Transform2D(0.0, p_position)
+
+	var collisions = world_state.intersect_shape(params, 1)
+	return not collisions.is_empty()
+	
+func _unhandled_input(event):
+	if not player.alive and event.is_action_pressed("ui_accept"):
+		get_tree().reload_current_scene()
+		
+func _on_fire_clicked(sender: Fire, fire_position: Vector2):
+	if player.carying == player.CARRY_ITEMS.FUEL and player.position.distance_to(fire_position) < player.REACH and sender.fuel < sender.refuel_limit:
+		player.lose_fuel()
+		sender.refuel()
+	
+func _on_block_clicked(sender, block_position: Vector2):
+	if player.position.distance_to(block_position) < player.REACH and player.carying == player.CARRY_ITEMS.NONE and sender.breakable:
+		sender.queue_free()
+		player.gain_block()
+		
+		var grid_position = world.world_to_grid(block_position)
+		var t = temperature_control.get_temperature(grid_position)
+		temperature_control.set_block(grid_position, GridBlock.air(t))
+	
+func _on_player_died():
+	$UI/Restart.visible = true
+	set_process(false)
+	set_physics_process(false)

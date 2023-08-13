@@ -1,0 +1,71 @@
+[gd_scene load_steps=7 format=3 uid="uid://bkxb1enbycbdn"]
+
+[ext_resource type="Script" path="res://fire.gd" id="1_ur7j0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l4y8a"]
+size = Vector2(42, 42)
+
+[sub_resource type="Gradient" id="Gradient_nq1cr"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fjneu"]
+gradient = SubResource("Gradient_nq1cr")
+fill = 1
+fill_from = Vector2(0.508, 0.487)
+fill_to = Vector2(1, 0.487179)
+
+[sub_resource type="SystemFont" id="SystemFont_5opnv"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ph8gd"]
+line_spacing = 0.0
+font = SubResource("SystemFont_5opnv")
+font_size = 22
+font_color = Color(0.12549, 0.12549, 0.12549, 1)
+shadow_size = 0
+
+[node name="Fire" type="Node2D"]
+script = ExtResource("1_ur7j0")
+max_fuel = 2400.0
+refuel_amount = 800.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_mask = 4
+input_pickable = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_l4y8a")
+
+[node name="Body" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+color = Color(0.921569, 0.223529, 0.109804, 1)
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(0.980392, 0.243137, 0.0823529, 1)
+energy = 1.25
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_fjneu")
+texture_scale = 20.0
+
+[node name="DebugLabel" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -17.0
+offset_top = -82.0
+offset_right = 181.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "382 j
+342 C"
+label_settings = SubResource("LabelSettings_ph8gd")
+metadata/_edit_use_anchors_ = true
+
+[connection signal="input_event" from="StaticBody2D" to="." method="_on_static_body_2d_input_event"]

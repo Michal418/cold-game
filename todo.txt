@@ -1,0 +1,14 @@
+# gameplay loop
+
+ - block breakping and placing
+  * abiliti to break from start
+	- transporting blocks
+	 * can carry only one block or one fuel at a time and movemnet signficantly slowed
+
+ - trees
+  - break trees from start?
+	- loot?
+	 - fuel
+	 - building blocks
+	/ maybe not for breaking but randomly drops fuel
+

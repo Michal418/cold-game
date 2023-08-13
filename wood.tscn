@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://dw5t7hc5fvx8d"]
+
+[ext_resource type="Script" path="res://wood.gd" id="1_yohei"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ptq7q"]
+size = Vector2(16, 16)
+
+[node name="Wood" type="Node2D"]
+script = ExtResource("1_yohei")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_ptq7q")
+
+[node name="Body" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+mouse_filter = 2
+color = Color(0.376471, 0.152941, 0.203922, 1)
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

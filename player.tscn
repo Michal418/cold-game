@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3 uid="uid://gxwc3f7w4qb"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_0atoq"]
+[ext_resource type="PackedScene" uid="uid://dw5t7hc5fvx8d" path="res://wood.tscn" id="2_vn2he"]
+[ext_resource type="PackedScene" uid="uid://bmxu2mvg2qyl2" path="res://block.tscn" id="3_5x55f"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_ce10s"]
+polygon = PackedVector2Array(-32, -32, 30, -32, 30, 30, -32, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fx43g"]
+size = Vector2(62, 62)
+
+[node name="Player" type="CharacterBody2D"]
+z_index = 1
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_0atoq")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+position = Vector2(1, 1)
+occluder = SubResource("OccluderPolygon2D_ce10s")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_fx43g")
+
+[node name="Body" type="ColorRect" parent="."]
+offset_left = -31.0
+offset_top = -31.0
+offset_right = 31.0
+offset_bottom = 31.0
+mouse_filter = 2
+color = Color(0.317647, 0.435294, 0.768627, 1)
+
+[node name="Wood" parent="." instance=ExtResource("2_vn2he")]
+visible = false
+position = Vector2(16, -15)
+interactable = false
+
+[node name="Block" parent="." instance=ExtResource("3_5x55f")]
+visible = false
+position = Vector2(6, 5)
+scale = Vector2(0.75, 0.75)
+interactable = false
