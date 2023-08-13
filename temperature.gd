@@ -47,9 +47,9 @@ func object_temperature(object: GridBlock, grid_position: Vector2) -> float:
 	dt *= object.conductivity * gridobj.conductivity
 	
 	match [object.state, gridobj.state]:
-		[GridMaterial.STATE.GAS, GridMaterial.STATE.GAS]:
+		[GridBlock.STATE.GAS, GridBlock.STATE.GAS]:
 			dt /= GAS_RATE
-		[GridMaterial.STATE.SOLID, GridMaterial.STATE.SOLID]:
+		[GridBlock.STATE.SOLID, GridBlock.STATE.SOLID]:
 			dt /= SOLID_RATE
 		_:
 			dt /= TRANSITION_RATE

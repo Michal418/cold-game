@@ -4,7 +4,7 @@ signal died
 
 enum CARRY_ITEMS { NONE, FUEL, BLOCK }
 
-var internal_temperature = GridBlock.new(30.0, 0.45, GridMaterial.STATE.SOLID)
+var internal_temperature = GridBlock.new(30.0, 0.45, GridBlock.STATE.SOLID)
 
 var external_temperature = 0.0
 var alive = true

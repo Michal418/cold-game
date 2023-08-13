@@ -17,7 +17,7 @@ var player: Player = null
 @export var refuel_amount = max_fuel / 6
 var refuel_limit = max_fuel - refuel_amount
 
-var internal_temperature = GridBlock.new(max_temperature, 0.2, GridMaterial.STATE.GAS)
+var internal_temperature = GridBlock.new(max_temperature, 0.2, GridBlock.STATE.GAS)
 var fuel = max_fuel
 
 func initialize(p_temperature: Temperature, p_player: Player):
