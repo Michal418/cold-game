@@ -12,7 +12,7 @@ var grid := []
 var sim_position := Vector2(0, 0)
 var objects := []
 
-var world = null
+var world: World = null
 
 func initialize(p_world: World):
 	world = p_world

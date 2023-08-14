@@ -11,10 +11,10 @@ var fire = preload("res://fire.tscn")
 
 var world = World.new(50, 64)
 
-@onready var temperature_control: Temperature = $TemperatureControl
+@onready var temperature_control = $TemperatureControl as Temperature
 @onready var player = $Player as Player
-@onready var temperature_label = $UI/Temperature
-@onready var cold_overlay = $UI/Overlay
+@onready var temperature_label = $UI/Temperature as Label
+@onready var cold_overlay = $UI/Overlay as ColorRect
 @onready var block_placeholder = $BlockPlaceholder as ColorRect
 @onready var fuel_placeholder = $FuelPlaceholder as ColorRect
 
@@ -234,3 +234,4 @@ func _on_player_died():
 	$UI/Restart.visible = true
 	set_process(false)
 	set_physics_process(false)
+

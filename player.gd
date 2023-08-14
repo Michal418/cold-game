@@ -10,10 +10,13 @@ var external_temperature = 0.0
 var alive = true
 var carying = CARRY_ITEMS.NONE
 
-@onready var wood = $Wood
-@onready var wood_collision_shape = $Wood/Area2D/CollisionShape2D
-@onready var block_collision_shape = $Block/StaticBody2D/CollisionShape2D
-@onready var cary_block = $Block
+const Wood = preload("res://wood.gd")
+const Block = preload("res://block.gd")
+
+@onready var wood = $Wood as Wood
+@onready var wood_collision_shape = $Wood/Area2D/CollisionShape2D as CollisionShape2D
+@onready var block_collision_shape = $Block/StaticBody2D/CollisionShape2D as CollisionShape2D
+@onready var cary_block = $Block as Block
 
 const FREEZING_TEMPERATURE = 8.0
 const COMFORTABLE_TEMPERATURE = 22.0

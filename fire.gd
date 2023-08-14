@@ -40,10 +40,10 @@ func _process(_delta):
 
 	if fuel > refuel_limit:
 		light.energy = 1.8
-		color_rect.color = Color('ff1414')
+		color_rect.color = Color('#ff1414')
 	else:
 		light.energy = internal_temperature.celsius / max_temperature * 1.5
-		color_rect.color = Color('eb391c')
+		color_rect.color = Color('#eb391c')
 
 
 func _on_player_died():

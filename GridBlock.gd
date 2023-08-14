@@ -64,3 +64,4 @@ func _init(p_temperature, p_conductivity, p_state):
 	set_celsius(p_temperature)
 	conductivity = p_conductivity
 	state = p_state
+
