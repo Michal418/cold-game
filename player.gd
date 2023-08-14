@@ -100,3 +100,4 @@ func _physics_process(delta):
 		velocity += dv
 		
 	move_and_slide()
+

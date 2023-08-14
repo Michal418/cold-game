@@ -76,4 +76,15 @@ offset_bottom = 40.0
 mouse_filter = 2
 color = Color(0.698039, 0.698039, 0.698039, 1)
 
+[node name="BlockPlaceholder" type="ColorRect" parent="."]
+offset_right = 64.0
+offset_bottom = 64.0
+mouse_filter = 2
+color = Color(0.329412, 1, 0.356863, 0.486275)
+
+[node name="FuelPlaceholder" type="ColorRect" parent="."]
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(0.929412, 0.443137, 0.690196, 0.54902)
+
 [connection signal="died" from="Player" to="." method="_on_player_died"]

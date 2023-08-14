@@ -3,17 +3,20 @@ extends Node2D
 const Temperature = preload("res://temperature.gd")
 const Fire = preload("res://fire.gd")
 const World = preload("res://world.gd")
+const Player = preload("res://player.gd")
 
-var block = preload("block.tscn")
+var block = preload("res://block.tscn")
 var wood = preload("res://wood.tscn")
 var fire = preload("res://fire.tscn")
 
 var world = World.new(50, 64)
 
 @onready var temperature_control: Temperature = $TemperatureControl
-@onready var player = $Player
+@onready var player = $Player as Player
 @onready var temperature_label = $UI/Temperature
 @onready var cold_overlay = $UI/Overlay
+@onready var block_placeholder = $BlockPlaceholder as ColorRect
+@onready var fuel_placeholder = $FuelPlaceholder as ColorRect
 
 
 
@@ -168,19 +171,54 @@ func _cast_ray(from: Vector2, to: Vector2, exclude=[]):
 	var query = PhysicsRayQueryParameters2D.create(from, to, 0xffffffff, exclude)
 	var result = space_state.intersect_ray(query)
 	return not result.is_empty()
-	
+
 func _unhandled_input(event):
 	if not player.alive and event.is_action_pressed("ui_accept"):
 		get_tree().reload_current_scene()
-		
+
+func _input(event):
+	if event is InputEventMouseMotion:
+		var mouse_position = get_global_mouse_position()
+		var grid_position = world.world_to_grid(mouse_position)
+		var world_position = world.grid_to_world(grid_position)
+
+		var collision_shape = null
+		var collision_position = null
+		var placeholder = null
+		var place_position = null
+
+		match player.carying:
+			Player.CARRY_ITEMS.BLOCK:
+				collision_shape = player.block_collision_shape.shape
+				collision_position = world_position + Vector2(32, 32)
+				placeholder = block_placeholder
+				place_position = world_position
+			Player.CARRY_ITEMS.FUEL:
+				collision_shape = player.wood_collision_shape.shape
+				collision_position = mouse_position
+				placeholder = fuel_placeholder
+				place_position = mouse_position - Vector2(8, 8)
+			_:
+				fuel_placeholder.visible = false
+				block_placeholder.visible = false
+				return
+
+		if player.position.distance_to(place_position) < player.REACH \
+				and not test_collision(collision_shape, collision_position) \
+				and not _cast_ray(player.position, place_position, [player.get_rid()]):
+					placeholder.position = place_position
+					placeholder.visible = true
+		else:
+			placeholder.visible = false
+
 func _on_fire_clicked(sender: Fire, fire_position: Vector2):
 	if player.carying == player.CARRY_ITEMS.FUEL \
 		and player.position.distance_to(fire_position) < player.REACH \
 		and sender.fuel < sender.refuel_limit:
 			player.lose_fuel()
 			sender.refuel()
-	
-func _on_block_clicked(sender, block_position: Vector2):	
+
+func _on_block_clicked(sender, block_position: Vector2):
 	if player.position.distance_to(block_position) < player.REACH \
 		and player.carying == player.CARRY_ITEMS.NONE \
 		and sender.breakable \
