@@ -1,3 +1,4 @@
 .godot/
 *.translation
 build.tmp
+build/*
