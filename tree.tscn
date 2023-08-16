@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0s7n62b8qiqf"]
+
+[ext_resource type="Script" path="res://tree.gd" id="1_wsdfb"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s38vc"]
+size = Vector2(40, 40)
+
+[node name="Tree" type="Node2D"]
+script = ExtResource("1_wsdfb")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+color = Color(0.105882, 0.537255, 0.368627, 1)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+input_pickable = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(20, 20)
+shape = SubResource("RectangleShape2D_s38vc")
+
+[connection signal="input_event" from="StaticBody2D" to="." method="_on_static_body_2d_input_event"]
