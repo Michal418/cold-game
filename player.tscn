@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://gxwc3f7w4qb"]
+[gd_scene load_steps=7 format=3 uid="uid://gxwc3f7w4qb"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_0atoq"]
 [ext_resource type="PackedScene" uid="uid://dw5t7hc5fvx8d" path="res://wood.tscn" id="2_vn2he"]
 [ext_resource type="PackedScene" uid="uid://bmxu2mvg2qyl2" path="res://block.tscn" id="3_5x55f"]
+[ext_resource type="PackedScene" uid="uid://d1bm2yymawj0r" path="res://big_wood.tscn" id="4_0g788"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_ce10s"]
 polygon = PackedVector2Array(-32, -32, 30, -32, 30, 30, -32, 30)
@@ -42,4 +43,9 @@ interactable = false
 visible = false
 position = Vector2(6, 5)
 scale = Vector2(0.75, 0.75)
+interactable = false
+
+[node name="BigWood" parent="." instance=ExtResource("4_0g788")]
+visible = false
+position = Vector2(-6, -6)
 interactable = false

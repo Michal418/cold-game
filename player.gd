@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 signal died
 
-enum CARRY_ITEMS { NONE, FUEL, BLOCK }
+enum CARRY_ITEMS { NONE, FUEL, BLOCK, BIG_WOOD }
 
 var internal_temperature = GridBlock.new(30.0, 0.45, GridBlock.STATE.SOLID)
 
@@ -16,7 +16,9 @@ const Block = preload("res://block.gd")
 @onready var wood = $Wood as Wood
 @onready var wood_collision_shape = $Wood/Area2D/CollisionShape2D as CollisionShape2D
 @onready var block_collision_shape = $Block/StaticBody2D/CollisionShape2D as CollisionShape2D
+@onready var big_wood_collision_shape = $BigWood/StaticBody2D/CollisionShape2D as CollisionShape2D
 @onready var cary_block = $Block as Block
+@onready var cary_big_wood = $BigWood
 
 const FREEZING_TEMPERATURE = 8.0
 const COMFORTABLE_TEMPERATURE = 22.0
@@ -26,6 +28,8 @@ var put_wood = func (_pos: Vector2):
 	push_error("`put_wood` function must be set")
 var put_block = func (_pos: Vector2):
 	push_error("put_block` function must be set")
+var put_big_wood = func (_pos: Vector2):
+	push_error("put_big_wood` function must be set")
 
 func freeing_progress():
 	var result = (internal_temperature.celsius - FREEZING_TEMPERATURE) \
@@ -46,6 +50,14 @@ func temperature_interaction(updated_block: GridBlock, grid_block: GridBlock):
 
 	if internal_temperature.celsius < FREEZING_TEMPERATURE:
 		_die()
+
+func gain_big_wood():
+	carying = CARRY_ITEMS.BIG_WOOD
+	cary_big_wood.visible = true
+
+func lose_big_wood():
+	carying = CARRY_ITEMS.NONE
+	cary_big_wood.visible = false
 
 func gain_block():
 	carying = CARRY_ITEMS.BLOCK
@@ -75,6 +87,9 @@ func _input(event):
 			elif carying == CARRY_ITEMS.BLOCK:
 				put_block.call(mouse_position)
 
+			elif carying == CARRY_ITEMS.BIG_WOOD:
+				put_big_wood.call(mouse_position)
+
 func _physics_process(delta):
 	const K = 2400.0
 	const MAX_SPEED = 180
@@ -102,4 +117,5 @@ func _physics_process(delta):
 		velocity += dv
 
 	move_and_slide()
+
 

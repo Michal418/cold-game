@@ -87,4 +87,10 @@ offset_right = 16.0
 offset_bottom = 16.0
 color = Color(0.929412, 0.443137, 0.690196, 0.54902)
 
+[node name="BigWoodPlaceholder" type="ColorRect" parent="."]
+offset_right = 36.0
+offset_bottom = 36.0
+mouse_filter = 2
+color = Color(0.321569, 0.239216, 0.2, 0.47451)
+
 [connection signal="died" from="Player" to="." method="_on_player_died"]
