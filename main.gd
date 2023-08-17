@@ -209,6 +209,10 @@ func _unhandled_input(event):
 		get_tree().reload_current_scene()
 
 func _input(event):
+	if event.is_action_pressed('ui_cancel'):
+		get_tree().paused = true
+		$PauseMenu.visible = true
+
 	if event is InputEventMouseMotion:
 		var mouse_position = get_global_mouse_position()
 		var grid_position = world.world_to_grid(mouse_position)
