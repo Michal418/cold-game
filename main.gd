@@ -277,13 +277,15 @@ func _on_tree_clicked(sender, _mouse_position: Vector2):
 			sender.queue_free()
 
 	elif sender is BigWood and player.carying == Player.CARRY_ITEMS.FUEL:
-		var fire_instance = fire_construct_instance(sender.position)
 		sender.queue_free()
-		self.add_child(fire_instance)
 		player.lose_fuel()
-		fire_instance.fuel = 0.0
 		var grid_position = world.world_to_grid(sender.position)
+		var world_position = world.grid_to_world(grid_position)
+		var fire_instance = fire_construct_instance(world_position + Vector2(32, 32))
+		fire_instance.fuel = 0.0
 		fire_instance.internal_temperature.celsius = temperature_control.get_temperature(grid_position)
+
+		self.add_child(fire_instance)
 		temperature_control.add_object(fire_instance)
 
 func _on_player_died():

@@ -97,7 +97,7 @@ func _physics_process(delta):
 
 	speed *= 0.5 * freeing_progress()
 
-	if carying == CARRY_ITEMS.BLOCK:
+	if carying in [CARRY_ITEMS.BLOCK, CARRY_ITEMS.BIG_WOOD]:
 		speed *= 0.5
 
 	var dv = Vector2(0, 0)
