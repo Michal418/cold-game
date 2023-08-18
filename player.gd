@@ -4,14 +4,15 @@ signal died
 
 enum CARRY_ITEMS { NONE, FUEL, BLOCK, BIG_WOOD }
 
+const GridBlock = preload("res://grid_block.gd")
+const Wood = preload("res://wood.gd")
+const Block = preload("res://block.gd")
+
 var internal_temperature = GridBlock.new(30.0, 0.45, GridBlock.STATE.SOLID)
 
 var external_temperature = 0.0
 var alive = true
 var carying = CARRY_ITEMS.NONE
-
-const Wood = preload("res://wood.gd")
-const Block = preload("res://block.gd")
 
 @onready var wood = $Wood as Wood
 @onready var wood_collision_shape = $Wood/Area2D/CollisionShape2D as CollisionShape2D

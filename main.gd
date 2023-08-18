@@ -5,6 +5,7 @@ const Fire = preload("res://fire.gd")
 const World = preload("res://world.gd")
 const Player = preload("res://player.gd")
 const BigWood = preload("res://big_wood.gd")
+const GridBlock = preload("res://grid_block.gd")
 
 var block = preload("res://block.tscn")
 var wood = preload("res://wood.tscn")
