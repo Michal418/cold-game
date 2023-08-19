@@ -2,6 +2,7 @@ extends Node2D
 
 @export var interactable = true
 @export var breakable = true
+@export var unbreakable_color: Color = Color('#362c38')
 
 @onready var collision_body = $StaticBody2D as StaticBody2D
 
@@ -18,7 +19,7 @@ func _ready():
 	interactable = false
 
 	if not breakable:
-		$Body.color = Color('#362c38')
+		$Body.color = unbreakable_color
 
 func _process(delta):
 	dsum += delta

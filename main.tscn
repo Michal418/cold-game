@@ -81,12 +81,12 @@ color = Color(0.698039, 0.698039, 0.698039, 1)
 offset_right = 64.0
 offset_bottom = 64.0
 mouse_filter = 2
-color = Color(0.329412, 1, 0.356863, 0.486275)
+color = Color(0.160784, 0.160784, 0.160784, 0.407843)
 
 [node name="FuelPlaceholder" type="ColorRect" parent="."]
 offset_right = 16.0
 offset_bottom = 16.0
-color = Color(0.929412, 0.443137, 0.690196, 0.54902)
+color = Color(0.376471, 0.152941, 0.203922, 0.454902)
 
 [node name="BigWoodPlaceholder" type="ColorRect" parent="."]
 offset_right = 36.0

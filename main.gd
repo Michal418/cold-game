@@ -183,7 +183,7 @@ func _ready():
 	tree_noise.seed = rng_seed
 	tree_noise.frequency = 0.02
 
-	print("seed: %s" % rng_seed)
+	print("seed: %x" % rng_seed)
 
 	construct_world(block_noise, tree_noise, rng)
 
