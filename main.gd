@@ -173,15 +173,17 @@ func _ready():
 	var rng = RandomNumberGenerator.new()
 	rng.seed = randi()
 
+	var rng_seed = rng.randi()
+
 	var block_noise = FastNoiseLite.new()
-	block_noise.seed = rng.randi() # 1336368079
+	block_noise.seed = rng_seed # 1336368079
 	block_noise.frequency = 0.075
 
 	var tree_noise = FastNoiseLite.new()
-	tree_noise.seed = rng.randi()
+	tree_noise.seed = rng_seed
 	tree_noise.frequency = 0.02
 
-	print(block_noise.seed, tree_noise.seed)
+	print("seed: %s" % rng_seed)
 
 	construct_world(block_noise, tree_noise, rng)
 
