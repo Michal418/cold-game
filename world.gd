@@ -7,6 +7,16 @@ func _init(p_grid_size: int, p_block_size: int):
 	grid_size = p_grid_size
 	block_size = p_block_size
 
+func serialize():
+	return var_to_bytes({
+		"grid_size": grid_size,
+		"block_size": block_size
+	})
+
+func deserialize(serialized_data):
+	grid_size = serialized_data['grid_size']
+	block_size = serialized_data['block_size']
+
 func world_to_grid(v: Vector2) -> Vector2:
 	var result = v / block_size
 	result = result.floor()

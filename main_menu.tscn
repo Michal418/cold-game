@@ -53,4 +53,5 @@ theme = SubResource("Theme_r6ekh")
 text = "Exit"
 
 [connection signal="button_down" from="MarginContainer/VBoxContainer/PlayButton" to="MarginContainer" method="_on_play_button_down"]
+[connection signal="button_down" from="MarginContainer/VBoxContainer/LoadButton" to="MarginContainer" method="_on_load_button_down"]
 [connection signal="button_down" from="MarginContainer/VBoxContainer/ExitButton" to="MarginContainer" method="_on_exit_button_down"]

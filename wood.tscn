@@ -5,7 +5,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ptq7q"]
 size = Vector2(16, 16)
 
-[node name="Wood" type="Node2D"]
+[node name="Wood" type="Node2D" groups=["Persist"]]
 script = ExtResource("1_yohei")
 
 [node name="Area2D" type="Area2D" parent="."]

@@ -5,7 +5,8 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s38vc"]
 size = Vector2(40, 40)
 
-[node name="Tree" type="Node2D"]
+[node name="Tree" type="Node2D" groups=["Persist"]]
+position = Vector2(-20, -20)
 script = ExtResource("1_wsdfb")
 
 [node name="ColorRect" type="ColorRect" parent="."]

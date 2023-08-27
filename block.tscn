@@ -8,8 +8,7 @@ polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 31)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g8c2x"]
 size = Vector2(62, 62)
 
-[node name="Block" type="Node2D"]
-position = Vector2(32, 32)
+[node name="Block" type="Node2D" groups=["Persist"]]
 script = ExtResource("1_rng60")
 
 [node name="LightOccluder2D" type="LightOccluder2D" parent="."]

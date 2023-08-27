@@ -24,25 +24,36 @@ var world = World.new(84, 64)
 @onready var big_wood_placeholder = $BigWoodPlaceholder as ColorRect
 
 
+func can_put_wood(where: Vector2):
+	return player.position.distance_to(where) < player.REACH \
+		and not _test_collision(player.wood_collision_shape.shape, where) \
+		and not _cast_ray(player.position, where, [player.get_rid()])
+
 func put_wood(where: Vector2):
-	if not _test_collision(player.wood_collision_shape.shape, where) \
-		and not _cast_ray(player.position, where, [player.get_rid()]):
+	if can_put_wood(where):
 			var wood_instance = wood.instantiate()
 			wood_instance.position = where
 			self.add_child(wood_instance)
 			player.lose_fuel()
 
+func can_put_big_wood(where: Vector2):
+	var grid_position = world.world_to_grid(where)
+	var world_position = world.grid_to_world(grid_position) + Vector2(18, 18)
+
+	return player.position.distance_to(world_position) < player.REACH \
+		and not _test_collision(player.big_wood_collision_shape.shape, world_position) \
+		and not _cast_ray(player.position, world_position, [player.get_rid()])
+
 func put_big_wood(where: Vector2):
 	var grid_position = world.world_to_grid(where)
 	var world_position = world.grid_to_world(grid_position) + Vector2(18, 18)
 
-	if not _test_collision(player.big_wood_collision_shape.shape, world_position) \
-		and not _cast_ray(player.position, world_position, [player.get_rid()]):
-			var big_wood_instance = big_wood.instantiate()
-			big_wood_instance.position = world_position
-			big_wood_instance.connect('clicked', _on_tree_clicked)
-			self.add_child(big_wood_instance)
-			player.lose_big_wood()
+	if can_put_big_wood(where):
+		var big_wood_instance = big_wood.instantiate()
+		big_wood_instance.position = world_position
+		big_wood_instance.connect('clicked', _on_tree_clicked)
+		self.add_child(big_wood_instance)
+		player.lose_big_wood()
 
 func place_block_to_grid(grid_position: Vector2, unbreakable=false):
 	var world_position = world.grid_to_world(grid_position) + Vector2(32, 32)
@@ -58,12 +69,18 @@ func place_block_to_grid(grid_position: Vector2, unbreakable=false):
 	var t = temperature_control.get_temperature(grid_position)
 	temperature_control.set_block(grid_position, GridBlock.solid_block(t))
 
-func put_block(where: Vector2):
+func can_place_block(where: Vector2) -> bool:
 	var grid_position = world.world_to_grid(where) # + Vector2(32, 32)
 	var world_position = world.grid_to_world(grid_position) + Vector2(32, 32)
 
-	if not _test_collision(player.block_collision_shape.shape, world_position) \
-		and not _cast_ray(player.position, where, [player.get_rid()]):
+	return player.position.distance_to(world_position) < player.REACH \
+		and not _test_collision(player.block_collision_shape.shape, world_position) \
+		and not _cast_ray(player.position, world_position, [player.get_rid()])
+
+func put_block(where: Vector2):
+	var grid_position = world.world_to_grid(where) # + Vector2(32, 32)
+
+	if can_place_block(where):
 			place_block_to_grid(grid_position)
 			player.lose_block()
 
@@ -125,7 +142,7 @@ rng: RandomNumberGenerator):
 
 			elif tree_noise_sample > 0.3 and rng.randf() > 0.85:
 				var tree_instance = tree.instantiate()
-				tree_instance.position = world_position
+				tree_instance.position = world_position + Vector2(18, 18)
 				tree_instance.connect('clicked', _on_tree_clicked)
 				self.add_child(tree_instance)
 
@@ -169,6 +186,37 @@ func _process(_delta):
 
 	cold_overlay.color.a = 1.0 - player.freeing_progress()
 
+	var mouse_position = get_global_mouse_position()
+	var grid_position = world.world_to_grid(mouse_position)
+	var world_position = world.grid_to_world(grid_position)
+
+	match player.carying:
+		Player.CARRY_ITEMS.BLOCK:
+			if can_place_block(mouse_position):
+				block_placeholder.visible = true
+				block_placeholder.position = world_position
+			else:
+				block_placeholder.visible = false
+
+		Player.CARRY_ITEMS.FUEL:
+			if can_put_wood(mouse_position):
+				fuel_placeholder.visible = true
+				fuel_placeholder.position = mouse_position - Vector2(8, 8)
+			else:
+				fuel_placeholder.visible = false
+
+		Player.CARRY_ITEMS.BIG_WOOD:
+			if can_put_big_wood(mouse_position):
+				big_wood_placeholder.visible = true
+				big_wood_placeholder.position = world_position + Vector2(18, 18)
+			else:
+				big_wood_placeholder.visible = false
+
+		_:
+			fuel_placeholder.visible = false
+			block_placeholder.visible = false
+			big_wood_placeholder.visible = false
+
 func _ready():
 	var rng = RandomNumberGenerator.new()
 	rng.seed = randi()
@@ -207,6 +255,27 @@ func _cast_ray(from: Vector2, to: Vector2, exclude=[]):
 	var result = space_state.intersect_ray(query)
 	return not result.is_empty()
 
+func serialize():
+	var file = FileAccess.open("user://saved.dat", FileAccess.WRITE)
+	var persistent_objects = get_tree().get_nodes_in_group('Persistent')
+
+	file.store_64(persistent_objects.size())
+
+	for o in persistent_objects:
+		var bytes = o.serialize()
+		file.store_var(bytes)
+
+	file.store_var(world.serialize())
+	file.store_var(temperature_control.serialize())
+
+func deserialize():
+	var file = FileAccess.open("user://saved.dat", FileAccess.READ)
+
+	var object_count = file.get_64()
+
+	for i in range(object_count):
+		pass
+
 func _unhandled_input(event):
 	if not player.alive and event.is_action_pressed("ui_accept"):
 		get_tree().reload_current_scene()
@@ -215,46 +284,6 @@ func _input(event):
 	if event.is_action_pressed('ui_cancel'):
 		get_tree().paused = true
 		$PauseMenu.visible = true
-
-	if event is InputEventMouseMotion:
-		var mouse_position = get_global_mouse_position()
-		var grid_position = world.world_to_grid(mouse_position)
-		var world_position = world.grid_to_world(grid_position)
-
-		var collision_shape = null
-		var collision_position = null
-		var placeholder = null
-		var place_position = null
-
-		match player.carying:
-			Player.CARRY_ITEMS.BLOCK:
-				collision_shape = player.block_collision_shape.shape
-				collision_position = world_position + Vector2(32, 32)
-				placeholder = block_placeholder
-				place_position = world_position
-			Player.CARRY_ITEMS.FUEL:
-				collision_shape = player.wood_collision_shape.shape
-				collision_position = mouse_position
-				placeholder = fuel_placeholder
-				place_position = mouse_position - Vector2(8, 8)
-			Player.CARRY_ITEMS.BIG_WOOD:
-				collision_shape = player.big_wood_collision_shape.shape
-				collision_position = mouse_position
-				placeholder = big_wood_placeholder
-				place_position = world_position + Vector2(18, 18)
-			_:
-				fuel_placeholder.visible = false
-				block_placeholder.visible = false
-				big_wood_placeholder.visible = false
-				return
-
-		if player.position.distance_to(place_position) < player.REACH \
-				and not _test_collision(collision_shape, collision_position) \
-				and not _cast_ray(player.position, place_position, [player.get_rid()]):
-					placeholder.position = place_position
-					placeholder.visible = true
-		else:
-			placeholder.visible = false
 
 func _on_fire_clicked(sender: Fire, fire_position: Vector2):
 	if player.carying == player.CARRY_ITEMS.FUEL \
@@ -299,5 +328,3 @@ func _on_player_died():
 	$UI/Restart.visible = true
 	set_process(false)
 	set_physics_process(false)
-
-

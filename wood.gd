@@ -6,6 +6,15 @@ const Player = preload("res://player.gd")
 @export var interactable = true
 
 
+func serialize():
+	return var_to_bytes({
+		"scene_file_path": scene_file_path,
+		"position": position
+	})
+
+func deserialize(serialized_data):
+	position = serialized_data['position']
+
 func _ready():
 	$Area2D.monitorable = interactable
 	$Area2D.monitoring = interactable

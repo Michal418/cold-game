@@ -5,7 +5,8 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ksgy1"]
 size = Vector2(36, 35)
 
-[node name="BigWood" type="Node2D"]
+[node name="BigWood" type="Node2D" groups=["Persist"]]
+position = Vector2(-18, -17)
 script = ExtResource("1_yti24")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]

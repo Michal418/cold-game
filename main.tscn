@@ -20,6 +20,7 @@ script = ExtResource("1_helkc")
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="Temperature" type="Label" parent="UI"]
+visible = false
 offset_left = 17.0
 offset_top = 18.0
 offset_right = 215.0

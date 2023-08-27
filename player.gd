@@ -49,6 +49,9 @@ func temperature_interaction(updated_block: GridBlock, grid_block: GridBlock):
 	internal_temperature.celsius = updated_block.celsius
 	external_temperature = grid_block.celsius
 
+	if internal_temperature.celsius > COMFORTABLE_TEMPERATURE:
+		internal_temperature.celsius = COMFORTABLE_TEMPERATURE
+
 	if internal_temperature.celsius < FREEZING_TEMPERATURE:
 		_die()
 
@@ -76,20 +79,29 @@ func gain_fuel():
 	carying = CARRY_ITEMS.FUEL
 	wood.visible = true
 
+func serialize():
+	var_to_bytes({
+		"scene_file_path": scene_file_path,
+		"position": position,
+		"carying": carying
+	})
+
+func deserialize(serialized_data):
+	position = serialized_data.position
+	carying = serialized_data.carying
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed:
 		var mouse_position = get_global_mouse_position()
 
-		if mouse_position.distance_to(position) < REACH:
-			if carying == CARRY_ITEMS.FUEL:
-				put_wood.call(mouse_position)
+		if carying == CARRY_ITEMS.FUEL:
+			put_wood.call(mouse_position)
 
-			elif carying == CARRY_ITEMS.BLOCK:
-				put_block.call(mouse_position)
+		elif carying == CARRY_ITEMS.BLOCK:
+			put_block.call(mouse_position)
 
-			elif carying == CARRY_ITEMS.BIG_WOOD:
-				put_big_wood.call(mouse_position)
+		elif carying == CARRY_ITEMS.BIG_WOOD:
+			put_big_wood.call(mouse_position)
 
 func _physics_process(delta):
 	const K = 2400.0

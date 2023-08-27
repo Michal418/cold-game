@@ -30,6 +30,17 @@ func refuel():
 func temperature_interaction(updated_block: GridBlock, _grid_block: GridBlock):
 	internal_temperature.celsius = updated_block.celsius
 
+func serialize():
+	return var_to_bytes({
+		"scene_file_path": scene_file_path,
+		"position": position,
+		"fuel": fuel
+	})
+
+func deserialize(serialized_data):
+	position = serialized_data['positoin']
+	fuel = serialized_data['fuel']
+
 func _process(_delta):
 	if internal_temperature.celsius < max_temperature and fuel > 0:
 		var dt = min(max_temperature - internal_temperature.celsius, fuel)

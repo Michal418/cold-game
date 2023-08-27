@@ -70,6 +70,19 @@ func player_interaction(pos: Vector2, internal_temperature: GridBlock):
 func _simulation_cycle_finished():
 	object_interactions()
 
+func serialize():
+	var result = []
+
+	for x in world.grid_size:
+		for y in world.grid_size:
+			result.push_back(grid[x][y].kelvin)
+
+	return var_to_bytes(result)
+
+func deserialize(serialized_data):
+	for i in range(serialized_data):
+		grid[i % world.grid_size][i / world.grid_size] = serialized_data[i]
+
 func _process(_delta):
 	for i in range(SIM_CYCLE_STEPS):
 		_grid_temperature(sim_position, Vector2(sim_position.x, sim_position.y + 1))

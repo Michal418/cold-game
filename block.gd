@@ -10,6 +10,16 @@ signal clicked(sender, block_position: Vector2)
 
 var dsum = 0.0
 
+
+func serialize():
+	return var_to_bytes({
+		"scene_file_path": scene_file_path,
+		"position": position
+	})
+
+func deserialize(serialized_data):
+	position = serialized_data["position"]
+
 func _ready():
 	if not interactable:
 		var sb = $StaticBody2D
