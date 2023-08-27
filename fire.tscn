@@ -23,7 +23,7 @@ font_size = 22
 font_color = Color(0.12549, 0.12549, 0.12549, 1)
 shadow_size = 0
 
-[node name="Fire" type="Node2D" groups=["Persist"]]
+[node name="Fire" type="Node2D" groups=["Persist", "TemperatureObject"]]
 script = ExtResource("1_ur7j0")
 max_fuel = 2400.0
 refuel_amount = 800.0

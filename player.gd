@@ -80,15 +80,15 @@ func gain_fuel():
 	wood.visible = true
 
 func serialize():
-	var_to_bytes({
+	return {
 		"scene_file_path": scene_file_path,
 		"position": position,
 		"carying": carying
-	})
+	}
 
 func deserialize(serialized_data):
-	position = serialized_data.position
-	carying = serialized_data.carying
+	position = serialized_data["position"]
+	carying = serialized_data["carying"]
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed:

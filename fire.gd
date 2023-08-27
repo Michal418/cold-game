@@ -5,9 +5,6 @@ signal clicked(sender, fire_position: Vector2)
 const Temperature = preload("res://temperature.gd")
 const Player = preload("res://player.gd")
 
-var temperature: Temperature = null
-var player: Player = null
-
 @onready var light = $PointLight2D
 @onready var color_rect = $Body
 @onready var label = $DebugLabel
@@ -20,10 +17,6 @@ var refuel_limit = max_fuel - refuel_amount
 var internal_temperature = GridBlock.new(max_temperature, 0.2, GridBlock.STATE.GAS)
 var fuel = max_fuel
 
-func initialize(p_temperature: Temperature, p_player: Player):
-	temperature = p_temperature
-	player = p_player
-
 func refuel():
 	fuel = clamp(fuel + refuel_amount, 0, max_fuel)
 
@@ -31,14 +24,14 @@ func temperature_interaction(updated_block: GridBlock, _grid_block: GridBlock):
 	internal_temperature.celsius = updated_block.celsius
 
 func serialize():
-	return var_to_bytes({
+	return {
 		"scene_file_path": scene_file_path,
 		"position": position,
 		"fuel": fuel
-	})
+	}
 
 func deserialize(serialized_data):
-	position = serialized_data['positoin']
+	position = serialized_data['position']
 	fuel = serialized_data['fuel']
 
 func _process(_delta):

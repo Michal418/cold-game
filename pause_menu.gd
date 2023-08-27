@@ -1,11 +1,14 @@
 extends CanvasLayer
 
 
+signal main_exited
+
 var can_unpause = false
 var dsum = 0.0
 
 
 func quit_game():
+	main_exited.emit()
 	get_tree().quit()
 
 func unpause():
@@ -15,8 +18,10 @@ func unpause():
 	get_tree().paused = false
 
 func to_menu():
-	get_tree().change_scene_to_file("res://main_menu.tscn")
+	main_exited.emit()
 
+	get_node("/root/").add_child(load("res://main_menu.tscn").instantiate())
+	get_node("/root/Main").queue_free()
 
 func _process(delta):
 	if can_unpause and Input.is_action_just_pressed('ui_cancel'):

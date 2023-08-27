@@ -98,3 +98,4 @@ color = Color(0.321569, 0.239216, 0.2, 0.47451)
 [node name="PauseMenu" parent="." instance=ExtResource("4_1s0fj")]
 
 [connection signal="died" from="Player" to="." method="_on_player_died"]
+[connection signal="main_exited" from="PauseMenu" to="." method="_on_pause_menu_main_exited"]

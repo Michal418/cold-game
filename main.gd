@@ -6,6 +6,8 @@ const World = preload("res://world.gd")
 const Player = preload("res://player.gd")
 const BigWood = preload("res://big_wood.gd")
 const GridBlock = preload("res://grid_block.gd")
+const Block = preload("res://block.gd")
+const mTree = preload("res://tree.gd")
 
 var block = preload("res://block.tscn")
 var wood = preload("res://wood.tscn")
@@ -87,7 +89,6 @@ func put_block(where: Vector2):
 func fire_construct_instance(where: Vector2):
 	var fire_instance = fire.instantiate()
 	fire_instance.position = where
-	fire_instance.initialize(temperature_control, player)
 	fire_instance.connect("clicked", _on_fire_clicked)
 	return fire_instance
 
@@ -158,11 +159,6 @@ rng: RandomNumberGenerator):
 	)
 	fire_instance.position = free_blocks[0] + Vector2(32, 32)
 
-	var _floor = $Floor
-	_floor.position = world.grid_to_world(Vector2(0, 0))
-	_floor.size = Vector2(world.block_size, world.block_size)
-	_floor.scale = Vector2(world.grid_size - 1, world.grid_size - 1)
-
 # print(_floor.get_transform().get_scale(), size * temperature_control.BLOCK_SIZE)
 
 func _area_fn(x: int, y: int, peak: float) -> float:
@@ -217,7 +213,9 @@ func _process(_delta):
 			block_placeholder.visible = false
 			big_wood_placeholder.visible = false
 
-func _ready():
+func initialize():
+	print("initialize")
+	
 	var rng = RandomNumberGenerator.new()
 	rng.seed = randi()
 
@@ -234,10 +232,20 @@ func _ready():
 	print("seed: %x" % rng_seed)
 
 	construct_world(block_noise, tree_noise, rng)
-
+	
+	set_process(true)
+	
+func _ready():
+	set_process(false)
+	
 	var ui_events = InputMap.action_get_events("ui_accept").map(func (a): return '"%s"' % a.as_text())
 	var action_names = "(%s)" % " or ".join(ui_events)
 	$UI/Restart.text = "Press %s to restart" % action_names
+	
+	var _floor = $Floor
+	_floor.position = world.grid_to_world(Vector2(0, 0))
+	_floor.size = Vector2(world.block_size, world.block_size)
+	_floor.scale = Vector2(world.grid_size - 1, world.grid_size - 1)
 
 func _test_collision(p_shape: Shape2D, p_position):
 	var world_state = get_world_2d().direct_space_state
@@ -257,24 +265,62 @@ func _cast_ray(from: Vector2, to: Vector2, exclude=[]):
 
 func serialize():
 	var file = FileAccess.open("user://saved.dat", FileAccess.WRITE)
-	var persistent_objects = get_tree().get_nodes_in_group('Persistent')
+	
+	var persistent_objects = get_tree().get_nodes_in_group('Persist')
+	var persistent_size = persistent_objects.size()
 
-	file.store_64(persistent_objects.size())
+	file.store_64(persistent_size)
 
 	for o in persistent_objects:
-		var bytes = o.serialize()
-		file.store_var(bytes)
+		var data = o.serialize()
+		file.store_var(data)
 
 	file.store_var(world.serialize())
 	file.store_var(temperature_control.serialize())
 
+	file.close()
+
 func deserialize():
+	for o in get_tree().get_nodes_in_group('Persist'):
+		if o != null:
+			o.free()
+
 	var file = FileAccess.open("user://saved.dat", FileAccess.READ)
 
-	var object_count = file.get_64()
+	for i in range(file.get_64()):
+		var data = file.get_var()
+		var o = load(data["scene_file_path"]).instantiate()
+		o.deserialize(data)
+		self.add_child(o)
+		
+		if o is Player:
+			player = o
+			player.add_to_group("player")
+			
+		if o is Fire:
+			o.connect("clicked", _on_fire_clicked)
+			
+		elif o is Block:
+			o.connect('clicked', _on_block_clicked)
+			
+		elif (o is BigWood) or (o is mTree):
+			o.connect('clicked', _on_tree_clicked)
 
-	for i in range(object_count):
-		pass
+	world.deserialize(file.get_var())
+	temperature_control.initialize(world)
+	temperature_control.deserialize(file.get_var())
+	
+	player.put_wood = self.put_wood
+	player.put_block = self.put_block
+	player.put_big_wood = self.put_big_wood
+
+	file.close()
+	
+	var temperature_objects = get_tree().get_nodes_in_group("TemperatureObject")
+	for o in temperature_objects:
+		temperature_control.add_object(o)
+	
+	set_process(true)
 
 func _unhandled_input(event):
 	if not player.alive and event.is_action_pressed("ui_accept"):
@@ -328,3 +374,6 @@ func _on_player_died():
 	$UI/Restart.visible = true
 	set_process(false)
 	set_physics_process(false)
+
+func _on_pause_menu_main_exited():
+	serialize()

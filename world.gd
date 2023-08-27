@@ -8,10 +8,10 @@ func _init(p_grid_size: int, p_block_size: int):
 	block_size = p_block_size
 
 func serialize():
-	return var_to_bytes({
+	return {
 		"grid_size": grid_size,
 		"block_size": block_size
-	})
+	}
 
 func deserialize(serialized_data):
 	grid_size = serialized_data['grid_size']

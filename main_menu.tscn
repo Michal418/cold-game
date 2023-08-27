@@ -40,12 +40,12 @@ theme_override_constants/separation = 16
 [node name="PlayButton" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme = SubResource("Theme_r6ekh")
-text = "Play"
+text = "Start new game"
 
 [node name="LoadButton" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme = SubResource("Theme_r6ekh")
-text = "Load"
+text = "Load game"
 
 [node name="ExitButton" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2

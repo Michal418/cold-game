@@ -10,10 +10,10 @@ var dsum = 0.0
 
 
 func serialize():
-	return var_to_bytes({
+	return {
 		"scene_file_path": scene_file_path,
 		"position": position
-	})
+	}
 
 func deserialize(serialized_data):
 	position = serialized_data["position"]

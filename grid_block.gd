@@ -12,6 +12,13 @@ static func air(p_temperature: float):
 static func solid_block(p_temperature: float):
 	return GridBlock.new(p_temperature, 0.005, STATE.SOLID)
 
+func serialize():
+	return {
+		"kelvin": get_kelvin(),
+		"conductivity": conductivity,
+		"state": state
+	}
+
 func get_kelvin() -> float:
 	return _temperature
 

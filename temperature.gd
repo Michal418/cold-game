@@ -71,17 +71,29 @@ func _simulation_cycle_finished():
 	object_interactions()
 
 func serialize():
-	var result = []
+	var result = {
+		"scene_file_path": scene_file_path,
+		"grid": []
+	}
 
 	for x in world.grid_size:
 		for y in world.grid_size:
-			result.push_back(grid[x][y].kelvin)
+			result["grid"].push_back(grid[x][y].serialize())
 
-	return var_to_bytes(result)
+	return result
 
 func deserialize(serialized_data):
-	for i in range(serialized_data):
-		grid[i % world.grid_size][i / world.grid_size] = serialized_data[i]
+	for i in range(serialized_data["grid"].size()):
+		var cell = grid[i % world.grid_size][i / world.grid_size]
+		var datacell = serialized_data["grid"][i]
+
+		cell.kelvin = datacell["kelvin"]
+		cell.conductivity = datacell["conductivity"]
+		cell.state = datacell["state"]
+
+		# grid[i % world.grid_size][i / world.grid_size].kelvin = serialized_data[i]["kelvin"]
+		# grid[i % world.grid_size][i / world.grid_size].conductivity = serialized_data[i]["conductivity"]
+		# grid[i % world.grid_size][i / world.grid_size].state = serialized_data[i]["state"]
 
 func _process(_delta):
 	for i in range(SIM_CYCLE_STEPS):
