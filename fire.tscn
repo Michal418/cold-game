@@ -42,7 +42,7 @@ offset_right = 16.0
 offset_bottom = 16.0
 mouse_filter = 2
 mouse_force_pass_scroll_events = false
-color = Color(0.921569, 0.223529, 0.109804, 1)
+color = Color(0.843137, 0.14902, 0.239216, 1)
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
 color = Color(0.980392, 0.243137, 0.0823529, 1)

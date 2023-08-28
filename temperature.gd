@@ -17,6 +17,7 @@ var world: World = null
 func initialize(p_world: World):
 	world = p_world
 
+	grid = []
 	grid.resize(world.grid_size)
 	for i in range(world.grid_size):
 		grid[i] = []
@@ -84,12 +85,14 @@ func serialize():
 
 func deserialize(serialized_data):
 	for i in range(serialized_data["grid"].size()):
-		var cell = grid[i % world.grid_size][i / world.grid_size]
+#		var cell = grid[i % world.grid_size][i / world.grid_size]
 		var datacell = serialized_data["grid"][i]
 
-		cell.kelvin = datacell["kelvin"]
-		cell.conductivity = datacell["conductivity"]
-		cell.state = datacell["state"]
+		grid[i % world.grid_size][i / world.grid_size] = GridBlock.deserialize(datacell)
+#
+#		cell.kelvin = datacell["kelvin"]
+#		cell.conductivity = datacell["conductivity"]
+#		cell.state = datacell["state"]
 
 		# grid[i % world.grid_size][i / world.grid_size].kelvin = serialized_data[i]["kelvin"]
 		# grid[i % world.grid_size][i / world.grid_size].conductivity = serialized_data[i]["conductivity"]

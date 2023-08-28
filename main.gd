@@ -213,9 +213,12 @@ func _process(_delta):
 			block_placeholder.visible = false
 			big_wood_placeholder.visible = false
 
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		serialize()
+		get_tree().quit()
+
 func initialize():
-	print("initialize")
-	
 	var rng = RandomNumberGenerator.new()
 	rng.seed = randi()
 
@@ -296,8 +299,9 @@ func deserialize():
 		if o is Player:
 			player = o
 			player.add_to_group("player")
+			player.connect("died", _on_player_died)
 			
-		if o is Fire:
+		elif o is Fire:
 			o.connect("clicked", _on_fire_clicked)
 			
 		elif o is Block:
@@ -324,7 +328,14 @@ func deserialize():
 
 func _unhandled_input(event):
 	if not player.alive and event.is_action_pressed("ui_accept"):
-		get_tree().reload_current_scene()
+#		get_tree().reload_current_scene()
+#		get_node("/root/Main").call_deferred("initialize")
+
+		get_tree().current_scene.queue_free()
+		var main_instance = load("res://main.tscn").instantiate()
+		get_node("/root").add_child(main_instance, true)
+		get_tree().set_current_scene(main_instance)
+		main_instance.call_deferred("initialize")
 
 func _input(event):
 	if event.is_action_pressed('ui_cancel'):

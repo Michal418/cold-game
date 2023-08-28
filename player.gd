@@ -83,12 +83,14 @@ func serialize():
 	return {
 		"scene_file_path": scene_file_path,
 		"position": position,
-		"carying": carying
+		"carying": carying,
+		"temperature": internal_temperature.serialize()
 	}
 
 func deserialize(serialized_data):
 	position = serialized_data["position"]
 	carying = serialized_data["carying"]
+	internal_temperature = GridBlock.deserialize(serialized_data["temperature"])
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed:

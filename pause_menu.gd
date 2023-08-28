@@ -8,8 +8,7 @@ var dsum = 0.0
 
 
 func quit_game():
-	main_exited.emit()
-	get_tree().quit()
+	get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
 
 func unpause():
 	visible = false
@@ -20,8 +19,12 @@ func unpause():
 func to_menu():
 	main_exited.emit()
 
-	get_node("/root/").add_child(load("res://main_menu.tscn").instantiate())
-	get_node("/root/Main").queue_free()
+#	get_tree().change_scene_to_file("res://main.tscn")
+
+	var main_instance = load("res://main_menu.tscn").instantiate()
+	get_tree().current_scene.queue_free()
+	get_node("/root/").add_child(main_instance, true)
+	get_tree().set_current_scene(main_instance)
 
 func _process(delta):
 	if can_unpause and Input.is_action_just_pressed('ui_cancel'):

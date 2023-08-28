@@ -14,10 +14,13 @@ static func solid_block(p_temperature: float):
 
 func serialize():
 	return {
-		"kelvin": get_kelvin(),
+		"celsius": get_celsius(),
 		"conductivity": conductivity,
 		"state": state
 	}
+	
+static func deserialize(serialized_data):
+	return GridBlock.new(serialized_data["celsius"], serialized_data["conductivity"], serialized_data["state"])
 
 func get_kelvin() -> float:
 	return _temperature
