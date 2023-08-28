@@ -50,6 +50,6 @@ func _process(_delta):
 		color_rect.color = Color('#eb391c')
 
 
-func _on_static_body_2d_input_event(_viewport, event, _shape_idx):
-	if event is InputEventMouseButton && event.button_index == MOUSE_BUTTON_LEFT && event.is_pressed():
+func _on_static_body_2d_input_event(_viewport, _event, _shape_idx):
+	if Input.is_action_just_pressed("interact"):
 		clicked.emit(self, position)

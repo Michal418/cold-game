@@ -9,7 +9,7 @@ extends Node2D
 
 signal clicked(sender, block_position: Vector2)
 
-var dsum = 0.0
+var n = 2
 
 
 func serialize():
@@ -35,27 +35,18 @@ func _initialize():
 
 	if breakable:
 		$Body.color = breakable_color
-		
-		breakable = false
-		dsum = 0.0
-		set_process(true)
 	else:
 		$Body.color = unbreakable_color
-		
-		set_process(false)
 
 func _ready():
 	_initialize()
 
-func _process(delta):
-	dsum += delta
-
-	if dsum > 0.3:
-		breakable = true
-		set_process(false)
-
-func _on_static_body_2d_input_event(_viewport, event, _shape_idx):
+func _on_static_body_2d_input_event(_viewport, _event, _shape_idx):
 	if not breakable:
+		return
+		
+	if n > 0:
+		n -= 1
 		return
 		
 	if Input.is_action_just_pressed("interact"):
