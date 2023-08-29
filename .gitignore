@@ -1,4 +1,5 @@
 .godot/
 *.translation
+*.import
 build.tmp
 build/*

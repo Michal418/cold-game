@@ -1,0 +1,7 @@
+keys,en,cs
+MAIN_MENU_PLAY,"Start new game","Začít novou hru"
+MAIN_MENU_LOAD,"Load game","Načíst hru"
+MAIN_MENU_EXIT,"Exit","Ukončit"
+PAUSE_MENU_RESUME,"Resume","Pokračovat"
+PAUSE_MENU_MENU,"Exit to main menu","Odejít od hlavního menu"
+PAUSE_MENU_EXIT,"Close game","Ukončit hru"

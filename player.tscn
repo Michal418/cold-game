@@ -32,7 +32,7 @@ offset_top = -31.0
 offset_right = 31.0
 offset_bottom = 31.0
 mouse_filter = 2
-color = Color(0.772549, 0.847059, 0.427451, 1)
+color = Color(0.164706, 0.286275, 0.6, 1)
 
 [node name="Wood" parent="." instance=ExtResource("2_vn2he")]
 visible = false

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://main.gd" id="1_helkc"]
 [ext_resource type="PackedScene" uid="uid://gxwc3f7w4qb" path="res://player.tscn" id="2_s6v7b"]
-[ext_resource type="Script" path="res://temperature.gd" id="4_1qu3o"]
+[ext_resource type="Script" uid="uid://bqo7jc0528pre" path="res://temperature.gd" id="4_1qu3o"]
 [ext_resource type="PackedScene" uid="uid://ctr05dcdf22x3" path="res://pause_menu.tscn" id="4_1s0fj"]
 
 [sub_resource type="SystemFont" id="SystemFont_pnarr"]
